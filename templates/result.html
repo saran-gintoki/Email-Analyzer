@@ -1,0 +1,136 @@
+<!-- Updated result.html for Version 2.7 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Parsed Email Artifacts</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h2 { background-color: #4CAF50; color: white; padding: 10px; }
+        h3 { color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
+        th { background-color: #4CAF50; color: white; }
+        a { color: #5a01a7; text-decoration: underline; }
+        .section { margin-top: 40px; }
+        .guide-section { background: #f9f9f9; padding: 20px; border-radius: 8px; }
+        .email-body { background: #f0f0f0; padding: 15px; border-radius: 8px; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+
+<h2>Email Artifacts</h2>
+<p><b>Sender Email Address:</b> {{ sender }}</p>
+<p><b>Subject Line:</b> {{ subject }}</p>
+<p><b>Sender Server IP:</b> {{ sender_ip }} (<a href="{{ reverse_dns }}" target="_blank">Lookup Reverse DNS</a>)</p>
+<p><b>Reply-To Address:</b> {{ reply_to }}</p>
+<p><b>Date & Time:</b> {{ date }}</p>
+<p><b>Recipient:</b> {{ recipient }}</p>
+
+<div class="section">
+<h2>File Artifacts</h2>
+{% if attachments %}
+<table>
+    <tr>
+        <th>Attachment Name</th>
+        <th>SHA-256 Hash</th>
+    </tr>
+    {% for attachment in attachments %}
+    <tr>
+        <td>{{ attachment.name }}</td>
+        <td>{{ attachment.sha256 }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No attachments found.</p>
+{% endif %}
+</div>
+
+<div class="section">
+<h2>Web Artifacts</h2>
+{% if urls %}
+<table>
+    <tr>
+        <th>Full URL</th>
+        <th>Root Domain</th>
+        <th>Screenshot</th>
+        <th>VirusTotal</th>
+        <th>URLScan</th>
+    </tr>
+    {% for u in urls %}
+    <tr>
+        <td><a href="{{ u.url }}" target="_blank">{{ u.url }}</a></td>
+        <td>{{ u.domain }}</td>
+        <td><img src="{{ u.screenshot }}" alt="screenshot" width="300px"></td>
+        <td><a href="{{ u.virustotal }}" target="_blank">View</a></td>
+        <td><a href="{{ u.urlscan }}" target="_blank">View</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No URLs found.</p>
+{% endif %}
+</div>
+
+<div class="section">
+<h2>Next Steps for Deeper Analysis</h2>
+<div class="guide-section">
+    <h3>URL Visualization</h3>
+    <ul>
+        <li><b>URL2PNG</b>: Visualize a malicious URL without visiting it. Input the URL and view the screenshot.</li>
+        <li><b>URLScan.io</b>: Submit the URL for a full behavioral analysis.</li>
+    </ul>
+
+    <h3>Reputation Checks</h3>
+    <ul>
+        <li><b>VirusTotal</b> and <b>URLScan.io</b> - check if the URL is flagged by any security vendors.</li>
+    </ul>
+
+    <h3>Public Threat Feeds</h3>
+    <ul>
+        <li><a href="https://urlhaus.abuse.ch/browse/" target="_blank">URLhaus</a> - Malicious URL database</li>
+        <li><a href="https://www.phishtank.com/" target="_blank">PhishTank</a> - Community-driven phishing intelligence</li>
+    </ul>
+
+    <h3>File Hash Reputation</h3>
+    <ul>
+        <li><a href="https://talosintelligence.com/talos_file_reputation" target="_blank">Cisco Talos File Reputation</a> - Scan attachments or hashes</li>
+        <li><a href="https://www.virustotal.com/gui/home/upload" target="_blank">VirusTotal File Upload</a> - Upload suspicious attachments</li>
+    </ul>
+
+    <h3>Advanced Threat Defense</h3>
+    <ul>
+        <li>Use enterprise-grade sandboxing solutions like <b>McAfee ATD</b> for file detonation and deeper inspection.</li>
+    </ul>
+
+    <h3>Malware Sandboxing</h3>
+    <ul>
+        <li><a href="https://www.hybrid-analysis.com/" target="_blank">Hybrid Analysis</a> - Upload malware samples for detailed behavior analysis.</li>
+    </ul>
+
+    <h3>Recommended Workflow</h3>
+    <ol>
+        <li>Visualize URLs with URL2PNG and URLScan</li>
+        <li>Use Whois to check root domain age and ownership</li>
+        <li>Search the domain with WannaBrowser for HTTP responses</li>
+        <li>Upload suspicious URLs to Hybrid Analysis</li>
+        <li>Check URLs and hashes against URLhaus and VirusTotal</li>
+    </ol>
+</div>
+</div>
+
+<div class="section">
+<h2>Full Parsed Email Body</h2>
+<div class="email-body">
+    {{ full_email }}
+</div>
+</div>
+<div style="text-align: center; margin: 40px 0;">
+    <a href="{{ url_for('upload_page') }}" 
+       style="padding: 12px 24px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 8px; font-size: 16px;">
+        Upload Another File
+    </a>
+</div>
+</body>
+</html>
